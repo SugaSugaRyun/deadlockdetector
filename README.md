@@ -27,7 +27,7 @@
 →Report potential deadlocks if the resulted graph at the end of an execution has a cycle
 <br>
 
-Main difference between two stretagy is deleteing released lock  
+Main difference between two strategy is deleteing released lock  
 
 ## Goal of this project  
 > Develop a program to detect deadlocks.  
