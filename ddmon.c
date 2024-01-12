@@ -110,7 +110,6 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex){
 	if ((error = dlerror()) != 0x0){
 		exit(EXIT_FAILURE) ;
     }
-    int ret = pthread_mutex_unlockp(mutex);
 
     int i ;
     void * arr[10] ;
@@ -138,7 +137,7 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex){
         } 
     }
     //lock or unlock , thread id         , send mutex addr        , addr of caller (backtrace [1])
-    //      1byte    , sizeof(pthread_t) , sizeof(pthread_mutex_t), sizeof(addr)
+    //      4byte    , sizeof(pthread_t) , sizeof(pthread_mutex_t), sizeof(addr)
     int lock_type = _UNLOCK;
     pthread_t tid = pthread_self();
     char program_name[256];
@@ -163,5 +162,8 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex){
     pthread_mutex_unlockp(&mutex_FIFO);
 
     close(fd);
+
+    int ret = pthread_mutex_unlockp(mutex);
+
     return ret;
 }

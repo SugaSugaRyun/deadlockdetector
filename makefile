@@ -5,7 +5,7 @@ LDFLAGS = -ldl
 all: ddmon.so target ddchck
 
 ddmon.so: ddmon.c
-	$(CC) -shared -fPIC $< -o $@ $(CFLAGS) $(LDFLAGS)
+	$(CC) -shared -fPIC $< -o $@ -DDEBUG $(CFLAGS) $(LDFLAGS)
 
 target: target.c
 	$(CC) $< -o $@ $(CFLAGS)

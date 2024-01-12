@@ -12,23 +12,12 @@ bool flag = false;
 
 void * func1(void * arg) {
 
-    while (1) {
-        // printf("still...\n");
-        pthread_mutex_lock(&mutex1);
-        pthread_mutex_lock(&mutex2);
+    // printf("still...\n");
+    pthread_mutex_lock(&mutex1);
+    pthread_mutex_lock(&mutex2);
 
-        if (flag == true) {
-            pthread_mutex_unlock(&mutex2);
-            // printf("true....\n");
-            
-        }
-        else {
-            // printf("get...\n");
-            pthread_mutex_unlock(&mutex1);
-            pthread_mutex_unlock(&mutex2);
-        }
-        sleep(1);
-    }
+    pthread_mutex_unlock(&mutex1);
+    pthread_mutex_unlock(&mutex2);
 
 }
 
@@ -47,9 +36,6 @@ int main() {
 		fprintf(stderr, "pthread create error\n");
 		exit(EXIT_FAILURE);
 	}
-
-    printf("input: ");
-    scanf("%s\n", input);
 
     flag = true;
 
@@ -72,3 +58,4 @@ int main() {
 
 
 }
+
