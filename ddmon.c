@@ -42,7 +42,6 @@ int pthread_mutex_lock(pthread_mutex_t *mutex){
 	if ((error = dlerror()) != 0x0){
 		exit(EXIT_FAILURE) ;
     }
-    int ret = pthread_mutex_lockp(mutex);
 
     int i ;
     void * arr[10] ;
@@ -95,6 +94,9 @@ int pthread_mutex_lock(pthread_mutex_t *mutex){
     pthread_mutex_unlockp(&mutex_FIFO);
 
     close(fd);
+
+    int ret = pthread_mutex_lockp(mutex);
+
     return ret;
 }
 

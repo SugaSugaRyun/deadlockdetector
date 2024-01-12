@@ -1,61 +1,44 @@
-#include <stdio.h>  
-#include <unistd.h>  
-#include <pthread.h> 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <sys/time.h>
+#include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
 
-pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER; 
-pthread_mutex_t mutex2 = PTHREAD_MUTEX_INITIALIZER; 
+pthread_mutex_t lock[2];
 
-bool flag = false;
+int opt;
 
-void * func1(void * arg) {
-
-    // printf("still...\n");
-    pthread_mutex_lock(&mutex1);
-    pthread_mutex_lock(&mutex2);
-
-    pthread_mutex_unlock(&mutex1);
-    pthread_mutex_unlock(&mutex2);
-
+void * thread_function1(){
+	printf("thread1\n");
+	pthread_mutex_lock(&lock[0]);
+	if(opt == 'd'){
+		sleep(1.5);
+	}
+	pthread_mutex_lock(&lock[1]);
+	pthread_mutex_unlock(&lock[1]);
+	pthread_mutex_unlock(&lock[0]);
+	return NULL;
 }
 
-int main() {
+void * thread_function2(){
+	printf("thread2\n");
+	sleep(1);
+	pthread_mutex_lock(&lock[1]);
+	pthread_mutex_lock(&lock[0]);
+	pthread_mutex_unlock(&lock[0]);
+	pthread_mutex_unlock(&lock[1]);
+	return NULL;
+}
 
-    pthread_t tid1, tid2;
-
-    char input[100];
-
-    if(pthread_create(&tid1, NULL, func1, NULL) != 0) { 
-		fprintf(stderr, "pthread create error\n");
-		exit(EXIT_FAILURE);
+int main(int argc, char * argv[]){
+	opt = getopt(argc, argv, "d");
+	
+	pthread_t threads[2];
+	
+	for(int i=0; i<2; i++){
+		pthread_mutex_init(&lock[i], NULL);
 	}
-
-	if(pthread_create(&tid2, NULL, func1, NULL) != 0) {
-		fprintf(stderr, "pthread create error\n");
-		exit(EXIT_FAILURE);
-	}
-
-    flag = true;
-
-    if(pthread_join(tid1, NULL) != 0) { 
-		fprintf(stderr, "pthread join error\n");
-		exit(EXIT_FAILURE);
-	}
-
-	if(pthread_join(tid2, NULL) != 0) { 
-		fprintf(stderr, "pthread join error\n");
-		exit(EXIT_FAILURE);
-	}
-
-    pthread_mutex_destroy(&mutex1); 
-    pthread_mutex_destroy(&mutex2); 
-
-    printf("The End");
-
-    return 0;
-
-
+	pthread_create(&threads[0], NULL, thread_function1, NULL);
+	pthread_create(&threads[1], NULL, thread_function2, NULL);
+	pthread_join(threads[0], NULL);
+	pthread_join(threads[1], NULL);
 }
 
