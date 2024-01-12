@@ -170,12 +170,14 @@ int main(int argc, char *argv[]){
             if(is_new_mutex){
                 pthread_mutex_t **mutex_new_list = (pthread_mutex_t**)malloc(sizeof(pthread_mutex_t*) * (mutex_num + 1));
                 pthread_t *mutex_new_owner = (pthread_t*)malloc(sizeof(pthread_t) * (mutex_num + 1));
+                unsigned int *mutex_new_return = (unsigned int*)malloc(sizeof(unsigned int) * (mutex_num + 1));
                 memset(mutex_new_list, 0, sizeof(pthread_mutex_t*) * (mutex_num + 1));
                 memset(mutex_new_owner, 0, sizeof(pthread_t) * (mutex_num + 1));
-                
+                memset(mutex_new_return, 0, sizeof(unsigned int) * (mutex_num + 1));
                 for(int j = 0; j< mutex_num; j++){
                     mutex_new_list[j] = mutex_list[j];
                     mutex_new_owner[j] = mutex_owner[j];
+                    mutex_new_return[j] = mutex_return[j];
                 }
                 if(mutex_list != NULL){
                     free(mutex_list);
@@ -183,9 +185,13 @@ int main(int argc, char *argv[]){
                 if(mutex_owner != NULL){
                     free(mutex_owner);
                 }
+                if(mutex_return != NULL){
+                    free(mutex_return);
+                }
                 mutex_new_list[mutex_num] = mutex;
                 mutex_list = mutex_new_list;
                 mutex_owner = mutex_new_owner;
+                mutex_return = mutex_new_return;
                 mutex_num += 1;
                 upscale_map();
             }
@@ -211,6 +217,8 @@ int main(int argc, char *argv[]){
                     break;
                 }
             }
+
+            mutex_return[index_mutex] = retaddr;
 
             //owner exist?
             if(mutex_owner[index_mutex] == 0){ //not - exist
@@ -238,8 +246,29 @@ int main(int argc, char *argv[]){
                 printf("------Mutex------|------Thread------|-----Line Number-----\n");
                 for(int i = 0; i < mutex_num; i++){
                     if(participate[i] == 1){
-                        printf("%-18x|%-19lu|", mutex_list[i], mutex_owner[i]);
-                        popen()
+                        printf("%-17x|%-18lu|", mutex_list[i], mutex_owner[i]);
+                        // popen()
+                        char command[256];
+                        snprintf(command, 256, "addr2line -e ./target %x", mutex_return[i]);
+                        FILE *fp;
+                        fp = popen(command, "r");
+                        if (fp == NULL) {
+                            perror("popen");
+                            exit(EXIT_FAILURE);
+                        }
+                        char line_out[256];
+                        
+                        if (fgets(line_out, sizeof(line_out), fp) != NULL) {
+                            char * line = strtok(line_out, ":");
+                            line = strtok(NULL, ":");
+                            printf("%s", line);
+                        } else {
+                            perror("fgets");
+                        }
+                        if (pclose(fp) == -1) {
+                            perror("pclose");
+                            exit(EXIT_FAILURE);
+                        }
                     }
                 }
                 printf("=D=E=A=D=L=O=C=K=\n"); 
