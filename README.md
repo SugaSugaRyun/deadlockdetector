@@ -6,7 +6,7 @@
 ---  
 
 
-## Two types of deadlock detecting
+## Two techniques of deadlock detecting
 ### 1. Cyclic deadlock monitoring algorithm 
 - Monitor lock acquires and releases in runtime  
 - Lock graph  
@@ -31,8 +31,19 @@ Main difference between two strategy is deleteing released lock
 
 ## Goal of this project  
 > Develop a program to detect deadlocks.  
+This program will make output which contains mutex address, thread id what call pthread_mutex_lock() and line number of pthread_mutex_lock() function call involved to make deadlock.  
 
+## How to build
+    $make
+    $make clean
 
-pc, thread 전송 해서 add2line 으로 line 찾기, -g옵션을 줘야함.
-pthread_self()
-fifo - syncronization needed
+## How to run
+You have to execute checking program first, and run target program with following command.
+
+    $./ddcheck
+    $LD=PRELOAD="./ddmon.so" ./target
+
+If result not produced well, then remove FIFO(named pipe).  
+Name of FIFO is ".ddtrace"  
+
+    $rm .ddtrace
