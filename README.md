@@ -34,8 +34,8 @@ Main difference between two strategy is deleteing released lock
 This program will make output which contains mutex address, thread id what call pthread_mutex_lock() and line number of pthread_mutex_lock() function call involved to make deadlock.  
 
 ## How to build
-    $make
     $make clean
+    $make
 
 ## How to run
 You have to execute checking program first, and run target program with following command.
