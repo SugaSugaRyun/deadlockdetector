@@ -40,7 +40,7 @@ This program will make output which contains mutex address, thread id what call 
 ## How to run
 You have to execute checking program first, and run target program with following command.
 
-    $./ddcheck
+    $./ddchck
     $LD=PRELOAD="./ddmon.so" ./target
 
 If result not produced well, then remove FIFO(named pipe).  
